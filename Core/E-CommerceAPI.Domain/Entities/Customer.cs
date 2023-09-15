@@ -2,15 +2,11 @@
 
 namespace E_CommerceAPI.Domain.Entities
 {
-    public class Product:BaseEntity
+    public class Customer: BaseEntity
     {
+
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int Stock { get; set; }
-        public int Price { get; set; }
 
         public ICollection<Order> Orders { get; set; }
-
-       
     }
 }

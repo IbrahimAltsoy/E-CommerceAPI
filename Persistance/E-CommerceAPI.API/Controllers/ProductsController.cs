@@ -13,7 +13,7 @@ namespace E_CommerceAPI.API.Controllers
 
         public ProductsController(IProductService productService)
         {
-            _productService = productService;
+            this._productService = productService;
         }
 
         [HttpGet]
