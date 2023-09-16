@@ -2,6 +2,7 @@
 using E_CommerceAPI.Domain.Entities.Common;
 using E_CommerceAPI.Persistance.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace E_CommerceAPI.Persistance.Repositories
@@ -19,30 +20,50 @@ namespace E_CommerceAPI.Persistance.Repositories
 
         public async Task<bool> AddAsync(T entity)
         {
-            await Table.AddAsync(entity);
-           await _context.SaveChangesAsync();
-            return true;
+          EntityEntry<T> entityEntry =  await Table.AddAsync(entity);
+           return entityEntry.State == EntityState.Added;
         }
            
 
-        Task<bool> IWriteRepository<T>.AddAsync(List<T> entity)
+        public async Task<bool> AddRangeAsync(List<T> entity)
         {
-            throw new NotImplementedException();
+            await Table.AddRangeAsync(entity);            
+            return true;
+            
+        }
+           
+
+      public bool Delete(T entity)
+        {
+            EntityEntry<T> entityEntry = Table.Remove(entity);
+            return entityEntry.State == EntityState.Deleted;
+     
         }
 
-        Task<bool> IWriteRepository<T>.Delete(T entity)
+       public async Task<bool> DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+          T model = await  Table.FirstOrDefaultAsync(data=> data.Id== Guid.Parse(id));
+            return Delete(model);
+
+
+        }
+        public bool DeleteRange(List<T> entities)
+        {
+            Table.RemoveRange(entities);
+            return true;
         }
 
-        Task<bool> IWriteRepository<T>.Delete(string id)
+       public  bool Update(T entity)
         {
-            throw new NotImplementedException();
+            EntityEntry<T> entityEntry =  Table.Update(entity);
+            return entityEntry.State == EntityState.Modified;
+        }
+        public async Task<int> SaveChanges()
+        {
+            
+            return await _context.SaveChangesAsync();
         }
 
-        Task<bool> IWriteRepository<T>.UpdateAsync(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
