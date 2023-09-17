@@ -23,18 +23,15 @@ namespace E_CommerceAPI.API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var products = _productService.GetAll();
+            var products = _productService.GetAll(true);
             return Ok(products);
         }
         [HttpPost]
-        public async void Add()
+        public async Task Add()
         {
             await _productWriteRepository.AddRangeAsync(new()
             {
-                new(){Id = Guid.NewGuid(), Name="Product-12", Description = "Product", Stock=13, Price=73, CreatedDate=DateTime.UtcNow},
-                new(){Id = Guid.NewGuid(), Name="Product-13", Description = "Product", Stock=23, Price=83, CreatedDate=DateTime.UtcNow},
-                new(){Id = Guid.NewGuid(), Name="Product-14", Description = "Product", Stock=33, Price=93, CreatedDate=DateTime.UtcNow},
-                new(){Id = Guid.NewGuid(), Name="Product-15", Description = "Product", Stock=43, Price=103, CreatedDate=DateTime.UtcNow},
+                new(){Id = Guid.NewGuid(), Name="Product-11121", Description = "Product-12344", Stock=13, Price=73, CreatedDate=DateTime.UtcNow}
             });
             await _productWriteRepository.SaveChanges();
            
