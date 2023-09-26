@@ -1,10 +1,12 @@
 ﻿using E_CommerceAPI.Application.Abstraction;
 using E_CommerceAPI.Application.Repositories;
+using E_CommerceAPI.Application.ViewModels.Products;
 using E_CommerceAPI.Domain.Entities;
 using E_CommerceAPI.Persistance.Concreate;
 using E_CommerceAPI.Persistance.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 
@@ -14,46 +16,70 @@ namespace E_CommerceAPI.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductReadRepository _productService;
+        private readonly IProductReadRepository _productReadService;
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IUserReadRepository _userReadRepository;
-        private readonly IUserWriteRepository _userWriteRepository;
 
-        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository)
+
+        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository)
         {
-            this._productService = productService;
+            this._productReadService = productService;
             _productWriteRepository = productWriteRepository;
-            _userReadRepository = userReadRepository;
-            _userWriteRepository = userWriteRepository;
+
         }
         //[Guid("0B99B2A9-7DEB-48DC-BC15-01B5180FC0F5")]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
-            var products = _userReadRepository.GetAll(true);
+            var products = _productReadService.GetAll(false);
             return Ok(products);
         }
-        [HttpPost]
-        public async Task AddUser()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
         {
-            await _userWriteRepository.AddRangeAsync(new()
+            var product =await _productReadService.GetByIdAsync(id,false);
+            return Ok(product);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddProduct(VM_Product_Create model)
+        {
+            if (ModelState.IsValid)
             {
-                new(){Id = Guid.NewGuid(), Name ="Ibrahim"}
-            });
-            await _productWriteRepository.SaveChanges();
+                await _productWriteRepository.AddAsync(new()
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    Stock = model.Stock,
+                    Price = model.Price
+                });
+                await _productWriteRepository.SaveChanges();
+                return StatusCode((int)HttpStatusCode.Created);
+            }
+            else
+            {
+                return Ok();
+            }
+           
 
         }
-        //
-        //[Guid("4ADCE470-26FA-4ABD-BEDD-E5F0B89BDD4F")]
         [HttpPut]
-        public async Task<IActionResult> Update(User user)
+        public async Task<IActionResult> UpdateProduct(VM_Product_Update model)
         {
-            User _user = await _userReadRepository.GetByIdAsync(user.Id.ToString(), true);
-            _user.Name = user.Name;
-
-            await _userWriteRepository.SaveChanges();
+            Product product = await _productReadService.GetByIdAsync(model.Id, true);
+            product.Name = model.Name;
+            product.Description = model.Description;
+            product.Stock = model.Stock;
+            product.Price = model.Price;
+            
+            await _productWriteRepository.SaveChanges();
             return Ok();
         }
-        //
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            var x = await _productWriteRepository.DeleteAsync(id);         
+            await _productWriteRepository.SaveChanges();            
+            return Ok();
+        }
+      
     }
 }
