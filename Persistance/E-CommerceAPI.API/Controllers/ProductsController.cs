@@ -44,21 +44,18 @@ namespace E_CommerceAPI.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _productWriteRepository.AddAsync(new()
-                {
-                    Name = model.Name,
-                    Description = model.Description,
-                    Stock = model.Stock,
-                    Price = model.Price
-                });
-                await _productWriteRepository.SaveChanges();
-                return StatusCode((int)HttpStatusCode.Created);
+                
             }
-            else
+            await _productWriteRepository.AddAsync(new()
             {
-                return Ok();
-            }
-           
+                Name = model.Name,
+                Description = model.Description,
+                Stock = model.Stock,
+                Price = model.Price
+            });
+            await _productWriteRepository.SaveChanges();
+            return StatusCode((int)HttpStatusCode.Created);
+
 
         }
         [HttpPut]
