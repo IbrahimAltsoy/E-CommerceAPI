@@ -1,9 +1,7 @@
-﻿using E_CommerceAPI.Application.Abstraction;
-using E_CommerceAPI.Application.Repositories;
+﻿using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
 using E_CommerceAPI.Application.Repositories.ProductImage;
-using E_CommerceAPI.Persistance.Concreate;
 using E_CommerceAPI.Persistance.Contexts;
 using E_CommerceAPI.Persistance.Repositories;
 using E_CommerceAPI.Persistance.Repositories.File;
@@ -21,7 +19,7 @@ namespace E_CommerceAPI.Persistance
             services.AddDbContext<ECommerceDbContext>(options => options.UseSqlServer(Configiration.ConnectingString));
 
 
-            services.AddScoped<IProductService, ProductService>();
+            
 
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
             services.AddScoped<IProductWriteRepository, ProductWriteRepository>();

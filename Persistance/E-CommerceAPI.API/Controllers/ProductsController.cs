@@ -1,4 +1,5 @@
-﻿using E_CommerceAPI.Application.Repositories;
+﻿using E_CommerceAPI.Application.Abstractions.Storage;
+using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
 using E_CommerceAPI.Application.Repositories.ProductImage;
@@ -19,28 +20,30 @@ namespace E_CommerceAPI.API.Controllers
         private readonly IProductReadRepository _productReadService;
         private readonly IProductWriteRepository _productWriteRepository;
         IWebHostEnvironment _webHostEnvironment;
-       readonly IFileService _fileService;
+       
         readonly IFileReadRepository _fileReadRepository;
         readonly IFileWriteRepository _fileWriteRepository;
         readonly IProductImageReadRepository _productImageReadRepository;
         readonly IProductImageWriteRepository _productImageWriteRepository;
         readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
         readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
+        readonly IStorageService _storageService;
 
 
 
-        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService = null, IFileReadRepository fileReadRepository = null, IFileWriteRepository fileWriteRepository = null, IProductImageReadRepository productImageReadRepository = null, IProductImageWriteRepository productImageWriteRepository = null, IInvoiceFileReadRepository invoiceFileReadRepository = null, IInvoiceFileWriteRepository invoiceFileWriteRepository = null)
+        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository = null, IFileWriteRepository fileWriteRepository = null, IProductImageReadRepository productImageReadRepository = null, IProductImageWriteRepository productImageWriteRepository = null, IInvoiceFileReadRepository invoiceFileReadRepository = null, IInvoiceFileWriteRepository invoiceFileWriteRepository = null, IStorageService storageService=null)
         {
             this._productReadService = productService;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-            _fileService = fileService;
+           
             _fileReadRepository = fileReadRepository;
             _fileWriteRepository = fileWriteRepository;
             _productImageReadRepository = productImageReadRepository;
             _productImageWriteRepository = productImageWriteRepository;
             _invoiceFileReadRepository = invoiceFileReadRepository;
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
+            _storageService = storageService;
         }
         //[Guid("0B99B2A9-7DEB-48DC-BC15-01B5180FC0F5")]
         [HttpGet]
@@ -124,13 +127,19 @@ namespace E_CommerceAPI.API.Controllers
             //    await fileStream.FlushAsync();
             //}
 
-            var datas= await _fileService.UploadAsync("resource/file",Request.Form.Files);
+
+
+
+            var datas = await _storageService.UploadAsync("resource/files", Request.Form.Files);
             await _productImageWriteRepository.AddRangeAsync(datas.Select(p => new ProductImageFile()
             {
                 FileName = p.fileName,
-                Path = p.path,
+                Path = p.pathOrContainerName,
+                Storage =_storageService.StorageName,
             }).ToList());
             await _productImageWriteRepository.SaveChanges();
+
+
             //await _invoiceFileWriteRepository.AddRangeAsync(datas.Select(p => new InvoiceFile()
             //{
             //    FileName = p.fileName,
@@ -146,6 +155,8 @@ namespace E_CommerceAPI.API.Controllers
             //}).ToList());
             //await _fileWriteRepository.SaveChanges();
             //var models =  _fileReadRepository.GetAll(false);
+            //
+            
             return Ok();
         }
       
