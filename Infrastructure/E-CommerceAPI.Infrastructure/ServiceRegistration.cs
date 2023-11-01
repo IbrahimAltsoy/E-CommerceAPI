@@ -3,6 +3,7 @@ using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Infrastructure.Enums;
 using E_CommerceAPI.Infrastructure.Services;
 using E_CommerceAPI.Infrastructure.Services.Stroage;
+using E_CommerceAPI.Infrastructure.Services.Stroage.Azure;
 using E_CommerceAPI.Infrastructure.Services.Stroage.Local;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +30,7 @@ namespace E_CommerceAPI.Infrastructure
                 case StroageType.Aws:
                     break;
                 case StroageType.Azure:
+                    serviceCollection.AddScoped<IStorage, AzureStorage>();
                     break;
                 default:
                     serviceCollection.AddScoped<IStorage, LocalStroage>();
