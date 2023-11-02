@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace E_CommerceAPI.Infrastructure.Services.Stroage.Azure
 {
-    public class AzureStorage :IAzureStorage
+    public class AzureStorage :Storage,IAzureStorage
     {
         readonly BlobServiceClient _blogServiceClient;
         BlobContainerClient _blobContainerClient;
@@ -46,9 +46,10 @@ namespace E_CommerceAPI.Infrastructure.Services.Stroage.Azure
             List<(string fileName, string pathOrContainerName)> datas = new();
             foreach (IFormFile file in files)
             {
-                BlobClient _blogClient = _blobContainerClient.GetBlobClient(file.Name);
+              string fileNewName= await FileRenameAsync(containerName, file.Name, HasFile);
+                BlobClient _blogClient = _blobContainerClient.GetBlobClient(fileNewName);
                 await _blogClient.UploadAsync(file.OpenReadStream());
-                datas.Add((file.Name, containerName));
+                datas.Add((fileNewName, containerName));
 
             }
             return datas;

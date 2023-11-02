@@ -6,7 +6,7 @@ using System.IO;
 
 namespace E_CommerceAPI.Infrastructure.Services.Stroage.Local
 {
-    public class LocalStroage : ILocalStorage
+    public class LocalStroage :Storage, ILocalStorage
     {
         readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -39,9 +39,10 @@ namespace E_CommerceAPI.Infrastructure.Services.Stroage.Local
             foreach (IFormFile file in files)
             {
                 //string fileNewName = await FileRenameAsync(uploadPath, file.FileName);
+                string fileNewName = await FileRenameAsync(pathOrContainer, file.Name, HasFile);
 
-                await CopyFileAsync($"{uploadPath}\\{file.Name}", file);
-                datas.Add((file.Name, $"{pathOrContainer}\\{file.Name}"));             
+                await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
+                datas.Add((fileNewName, $"{pathOrContainer}\\{fileNewName}"));             
             }
 
             
