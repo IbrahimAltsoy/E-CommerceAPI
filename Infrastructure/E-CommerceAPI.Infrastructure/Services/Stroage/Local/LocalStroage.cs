@@ -39,6 +39,7 @@ namespace E_CommerceAPI.Infrastructure.Services.Stroage.Local
             foreach (IFormFile file in files)
             {
                 //string fileNewName = await FileRenameAsync(uploadPath, file.FileName);
+                //aynı isimli dosyaları yüklemiyor gözden geçir burayı
                 string fileNewName = await FileRenameAsync(pathOrContainer, file.Name, HasFile);
 
                 await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);

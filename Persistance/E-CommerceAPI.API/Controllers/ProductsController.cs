@@ -17,11 +17,11 @@ namespace E_CommerceAPI.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductReadRepository _productReadService;
+        private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
         IWebHostEnvironment _webHostEnvironment;
        
-        readonly IFileReadRepository _fileReadRepository;
+       private readonly IFileReadRepository _fileReadRepository;
         readonly IFileWriteRepository _fileWriteRepository;
         readonly IProductImageReadRepository _productImageReadRepository;
         readonly IProductImageWriteRepository _productImageWriteRepository;
@@ -33,7 +33,7 @@ namespace E_CommerceAPI.API.Controllers
 
         public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository = null, IFileWriteRepository fileWriteRepository = null, IProductImageReadRepository productImageReadRepository = null, IProductImageWriteRepository productImageWriteRepository = null, IInvoiceFileReadRepository invoiceFileReadRepository = null, IInvoiceFileWriteRepository invoiceFileWriteRepository = null, IStorageService storageService=null)
         {
-            this._productReadService = productService;
+            this._productReadRepository = productService;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
            
@@ -49,8 +49,8 @@ namespace E_CommerceAPI.API.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery]Pagination pagination)
         {
-            var totalCount = _productReadService.GetAll(false).Count();
-            var products = _productReadService.GetAll(true).Skip(pagination.Size * pagination.Page).Take(pagination.Size).Select(p => new
+            var totalCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(true).Skip(pagination.Size * pagination.Page).Take(pagination.Size).Select(p => new
             {
                p.Id,
                 p.Name,
@@ -95,7 +95,7 @@ namespace E_CommerceAPI.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateProduct(VM_Product_Update model)
         {
-            Product product = await _productReadService.GetByIdAsync(model.Id, true);
+            Product product = await _productReadRepository.GetByIdAsync(model.Id, true);
             product.Name = model.Name;
             product.Description = model.Description;
             product.Stock = model.Stock;
@@ -112,7 +112,7 @@ namespace E_CommerceAPI.API.Controllers
             return Ok();
         }
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string id)
         {
             //string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
             //if(!Directory.Exists(uploadPath))
@@ -130,12 +130,14 @@ namespace E_CommerceAPI.API.Controllers
 
 
 
-            var datas = await _storageService.UploadAsync("files", Request.Form.Files);
-            await _productImageWriteRepository.AddRangeAsync(datas.Select(p => new ProductImageFile()
+            List<(string fileName,string pathOrContainerName)> result = await _storageService.UploadAsync("files", Request.Form.Files);
+           Product product = await _productReadRepository.GetByIdAsync(id,true);
+            await _productImageWriteRepository.AddRangeAsync(result.Select(p => new ProductImageFile()
             {
                 FileName = p.fileName,
                 Path = p.pathOrContainerName,
-                Storage =_storageService.StorageName
+                Storage = _storageService.StorageName,
+                Products = new List<Product>() { product}
             }).ToList());
             await _productImageWriteRepository.SaveChanges();
 

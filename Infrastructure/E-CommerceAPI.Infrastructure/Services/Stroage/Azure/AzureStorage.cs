@@ -49,7 +49,7 @@ namespace E_CommerceAPI.Infrastructure.Services.Stroage.Azure
               string fileNewName= await FileRenameAsync(containerName, file.Name, HasFile);
                 BlobClient _blogClient = _blobContainerClient.GetBlobClient(fileNewName);
                 await _blogClient.UploadAsync(file.OpenReadStream());
-                datas.Add((fileNewName, containerName));
+                datas.Add((fileNewName, $"{containerName}/{fileNewName}"));
 
             }
             return datas;
