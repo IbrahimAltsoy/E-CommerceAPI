@@ -1,4 +1,9 @@
 ﻿using E_CommerceAPI.Application.Abstractions.Storage;
+using E_CommerceAPI.Application.Features.Commands.Product.CreateProduct;
+using E_CommerceAPI.Application.Features.Commands.Product.DeleteProduct;
+using E_CommerceAPI.Application.Features.Commands.Product.UpdateProduct;
+using E_CommerceAPI.Application.Features.Queries.Product.GetAllProducts;
+using E_CommerceAPI.Application.Features.Queries.Product.GetByIdAsyncProduct;
 using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
@@ -8,6 +13,7 @@ using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Application.ViewModels.Products;
 using E_CommerceAPI.Domain.Entities;
 using E_CommerceAPI.Persistance.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -33,13 +39,16 @@ namespace E_CommerceAPI.API.Controllers
         readonly IConfiguration _configuration;
 
 
+        readonly IMediator _mediator;
 
-        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository = null, IFileWriteRepository fileWriteRepository = null, IProductImageReadRepository productImageReadRepository = null, IProductImageWriteRepository productImageWriteRepository = null, IInvoiceFileReadRepository invoiceFileReadRepository = null, IInvoiceFileWriteRepository invoiceFileWriteRepository = null, IStorageService storageService=null, IConfiguration configuration=null)
+
+
+        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository = null, IFileWriteRepository fileWriteRepository = null, IProductImageReadRepository productImageReadRepository = null, IProductImageWriteRepository productImageWriteRepository = null, IInvoiceFileReadRepository invoiceFileReadRepository = null, IInvoiceFileWriteRepository invoiceFileWriteRepository = null, IStorageService storageService = null, IConfiguration configuration = null, IMediator mediator = null)
         {
             this._productReadRepository = productService;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-           
+
             _fileReadRepository = fileReadRepository;
             _fileWriteRepository = fileWriteRepository;
             _productImageReadRepository = productImageReadRepository;
@@ -48,27 +57,40 @@ namespace E_CommerceAPI.API.Controllers
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
             _storageService = storageService;
             _configuration = configuration;
+            _mediator = mediator;
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync([FromRoute]GetByIdAsyncQueryRequest getByIdAsyncQueryRequest)
+        {
+            GetByIdAsyncQueryResponse response = await _mediator.Send(getByIdAsyncQueryRequest);
+        
+           
+            return Ok(response);
         }
         //[Guid("0B99B2A9-7DEB-48DC-BC15-01B5180FC0F5")]
         [HttpGet]
-        public IActionResult GetAll([FromQuery]Pagination pagination)
-        {
-            var totalCount = _productReadRepository.GetAll(false).Count();
-            var products = _productReadRepository.GetAll(true).Skip(pagination.Size * pagination.Page).Take(pagination.Size).Select(p => new
-            {
-               p.Id,
-                p.Name,
-                p.Description,
-                p.Stock,
-                p.Price               
+        public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest ) 
+        { 
+           GetAllProductsQueryResponse response= await _mediator.Send(getAllProductsQueryRequest); return Ok(response);
+        //public IActionResult GetAll([FromQuery]Pagination pagination)
+        //{
+
+        //    var totalCount = _productReadRepository.GetAll(false).Count();
+        //    var products = _productReadRepository.GetAll(true).Skip(pagination.Size * pagination.Page).Take(pagination.Size).Select(p => new
+        //    {
+        //        p.Id,
+        //        p.Name,
+        //        p.Description,
+        //        p.Stock,
+        //        p.Price
 
 
-            }).ToList();
-            return Ok(new
-            {
-                totalCount,
-                products
-            });
+        //    }).ToList();
+        //    return Ok(new
+        //    {
+        //        totalCount,
+        //        products
+        //    });
         }
         //[HttpGet("{id}")]
         //public async Task<IActionResult> Get(string id)
@@ -77,42 +99,45 @@ namespace E_CommerceAPI.API.Controllers
         //    return Ok(product);
         //}
         [HttpPost]
-        public async Task<IActionResult> AddProduct(VM_Product_Create model)
+        public async Task<IActionResult> AddProduct(CreateProductCommandRequest createProductCommandRequest)
         {
-            if (ModelState.IsValid)
-            {
+            CreateProductCommandResponse response= await _mediator.Send(createProductCommandRequest);
+        //    if (ModelState.IsValid)
+        //    {
                 
-            }
-            await _productWriteRepository.AddAsync(new()
-            {
+        //    }
+        //    await _productWriteRepository.AddAsync(new()
+        //    {
 
-                Name = model.Name,
-                Description = model.Description,
-                Stock = model.Stock,
-                Price = model.Price
-            });
-            await _productWriteRepository.SaveChanges();
+        //        Name = model.Name,
+        //        Description = model.Description,
+        //        Stock = model.Stock,
+        //        Price = model.Price
+        //    });
+        //    await _productWriteRepository.SaveChanges();
             return StatusCode((int)HttpStatusCode.Created);
 
 
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct(VM_Product_Update model)
+        public async Task<IActionResult> UpdateProduct(UpdateProductCommandRequest updateProductCommandRequest)
         {
-            Product product = await _productReadRepository.GetByIdAsync(model.Id, true);
-            product.Name = model.Name;
-            product.Description = model.Description;
-            product.Stock = model.Stock;
-            product.Price = model.Price;
+            await _mediator.Send(updateProductCommandRequest);
+            //Product product = await _productReadRepository.GetByIdAsync(model.Id, true);
+            //product.Name = model.Name;
+            //product.Description = model.Description;
+            //product.Stock = model.Stock;
+            //product.Price = model.Price;
             
-            await _productWriteRepository.SaveChanges();
+            //await _productWriteRepository.SaveChanges();
             return Ok();
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(string id)
+        public async Task<IActionResult> DeleteProduct(/*string id*/ DeleteProductCommandRequest deleteProductCommandRequest)
         {
-            var x = await _productWriteRepository.DeleteAsync(id);         
-            await _productWriteRepository.SaveChanges();            
+            await _mediator.Send(deleteProductCommandRequest);
+            //var x = await _productWriteRepository.DeleteAsync(id);         
+            //await _productWriteRepository.SaveChanges();            
             return Ok();
         }
         [HttpPost("[action]")]

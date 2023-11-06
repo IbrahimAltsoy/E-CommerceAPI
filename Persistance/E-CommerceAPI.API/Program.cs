@@ -1,3 +1,4 @@
+using E_CommerceAPI.Application;
 using E_CommerceAPI.Application.Validator.Product;
 using E_CommerceAPI.Infrastructure;
 using E_CommerceAPI.Infrastructure.Enums;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddPersistanceServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
 //builder.Services.AddStroage<LocalStroage>();
 builder.Services.AddStroage<AzureStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy=>
