@@ -15,7 +15,7 @@ namespace E_CommerceAPI.Application.Features.Commands.Product.DeleteProduct
 
         public async Task<DeleteProductCommandResponse> Handle(DeleteProductCommandRequest request, CancellationToken cancellationToken)
         {
-            var x = await _productWriteRepository.DeleteAsync(request.Id);
+            var x = await _productWriteRepository.DeleteAsync(request.id);
             await _productWriteRepository.SaveChanges();
             return new();
         }
