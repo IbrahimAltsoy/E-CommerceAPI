@@ -2,7 +2,7 @@
 
 namespace E_CommerceAPI.Application.Repositories
 {
-    public interface IUserWriteRepository:IWriteRepository<User>
+    public interface IUserWriteRepository:IWriteRepository<Product>
     {
     }
 }

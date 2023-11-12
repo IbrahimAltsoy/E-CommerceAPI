@@ -1,10 +1,12 @@
 ﻿using E_CommerceAPI.Domain.Entities;
 using E_CommerceAPI.Domain.Entities.Common;
+using E_CommerceAPI.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_CommerceAPI.Persistance.Contexts
 {
-    public class ECommerceDbContext : DbContext
+    public class ECommerceDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         public ECommerceDbContext(DbContextOptions options) : base(options)
         {
@@ -14,7 +16,7 @@ namespace E_CommerceAPI.Persistance.Contexts
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Domain.Entities.File> Files { get; set; }
         public DbSet<ProductImageFile> ProductImageFiles { get; set; }
         public DbSet<InvoiceFile> InvoiceFiles { get; set; }

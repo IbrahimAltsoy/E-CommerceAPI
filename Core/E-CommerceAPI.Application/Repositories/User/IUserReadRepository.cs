@@ -2,7 +2,7 @@
 
 namespace E_CommerceAPI.Application.Repositories
 {
-    public interface IUserReadRepository: IReadRepository<User>
+    public interface IUserReadRepository: IReadRepository<Product>
     {
 
     }

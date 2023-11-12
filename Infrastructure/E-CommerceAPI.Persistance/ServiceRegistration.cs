@@ -2,6 +2,7 @@
 using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
 using E_CommerceAPI.Application.Repositories.ProductImage;
+using E_CommerceAPI.Domain.Entities.Identity;
 using E_CommerceAPI.Persistance.Contexts;
 using E_CommerceAPI.Persistance.Repositories;
 using E_CommerceAPI.Persistance.Repositories.File;
@@ -18,7 +19,15 @@ namespace E_CommerceAPI.Persistance
         {
             services.AddDbContext<ECommerceDbContext>(options => options.UseSqlServer(Configiration.ConnectingString));
 
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit=false;
+                options.Password.RequireLowercase=false;
+                options.Password.RequireUppercase=false;
 
+            }).AddEntityFrameworkStores<ECommerceDbContext>();
             
 
             services.AddScoped<IProductReadRepository, ProductReadRepository>();

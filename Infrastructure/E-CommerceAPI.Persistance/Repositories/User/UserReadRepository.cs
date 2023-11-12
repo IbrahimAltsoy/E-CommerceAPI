@@ -4,7 +4,7 @@ using E_CommerceAPI.Persistance.Contexts;
 
 namespace E_CommerceAPI.Persistance.Repositories
 {
-    public class UserReadRepository : ReadRepository<User>, IUserReadRepository
+    public class UserReadRepository : ReadRepository<Product>, IUserReadRepository
     {
         public UserReadRepository(ECommerceDbContext context) : base(context)
         {
