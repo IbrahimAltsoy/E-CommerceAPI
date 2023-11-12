@@ -23,6 +23,17 @@ builder.Services.AddFluentValidation(configration => configration.RegisterValida
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication("Admin")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+        };
+    });
 
 var app = builder.Build();
 
