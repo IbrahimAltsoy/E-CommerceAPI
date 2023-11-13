@@ -1,10 +1,12 @@
 ﻿using E_CommerceAPI.Application.Abstractions.Storage;
+using E_CommerceAPI.Application.Abstractions.Token;
 using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Infrastructure.Enums;
 using E_CommerceAPI.Infrastructure.Services;
 using E_CommerceAPI.Infrastructure.Services.Stroage;
 using E_CommerceAPI.Infrastructure.Services.Stroage.Azure;
 using E_CommerceAPI.Infrastructure.Services.Stroage.Local;
+using E_CommerceAPI.Infrastructure.Services.Token;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace E_CommerceAPI.Infrastructure
@@ -15,6 +17,7 @@ namespace E_CommerceAPI.Infrastructure
         {
             //serviceCollection.AddScoped<IFileService, FileService>();
             serviceCollection.AddScoped<IStorageService, StorageService>();
+            serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
         }
         public static void AddStroage<T>(this IServiceCollection serviceCollection) where T : class, IStorage
         {

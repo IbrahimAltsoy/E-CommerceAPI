@@ -11,21 +11,16 @@ using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
 using E_CommerceAPI.Application.Repositories.ProductImage;
-using E_CommerceAPI.Application.RequestParameters;
-using E_CommerceAPI.Application.Services;
-using E_CommerceAPI.Application.ViewModels.Products;
-using E_CommerceAPI.Domain.Entities;
-using E_CommerceAPI.Persistance.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net;
 
 namespace E_CommerceAPI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductReadRepository _productReadRepository;
