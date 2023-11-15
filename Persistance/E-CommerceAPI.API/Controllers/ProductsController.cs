@@ -15,7 +15,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-
+// Google Client Id: 452756695338-an9ehvm7aotc1dhvrrflpqrmehbeqqj0.apps.googleusercontent.com 
+// google client Secret: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
 namespace E_CommerceAPI.API.Controllers
 {
     [Route("api/[controller]")]
@@ -35,18 +36,16 @@ namespace E_CommerceAPI.API.Controllers
         readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
         readonly IStorageService _storageService;
         readonly IConfiguration _configuration;
-
-
         readonly IMediator _mediator;
 
 
 
-        public ProductsController(IProductReadRepository productService, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository = null, IFileWriteRepository fileWriteRepository = null, IProductImageReadRepository productImageReadRepository = null, IProductImageWriteRepository productImageWriteRepository = null, IInvoiceFileReadRepository invoiceFileReadRepository = null, IInvoiceFileWriteRepository invoiceFileWriteRepository = null, IStorageService storageService = null, IConfiguration configuration = null, IMediator mediator = null)
+
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository, IFileWriteRepository fileWriteRepository, IProductImageReadRepository productImageReadRepository, IProductImageWriteRepository productImageWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService, IConfiguration configuration)
         {
-            this._productReadRepository = productService;
+            _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-
             _fileReadRepository = fileReadRepository;
             _fileWriteRepository = fileWriteRepository;
             _productImageReadRepository = productImageReadRepository;
@@ -55,8 +54,8 @@ namespace E_CommerceAPI.API.Controllers
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
             _storageService = storageService;
             _configuration = configuration;
-            _mediator = mediator;
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync([FromRoute]GetByIdAsyncQueryRequest getByIdAsyncQueryRequest)
         {

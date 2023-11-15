@@ -32,7 +32,7 @@ namespace E_CommerceAPI.Application.Features.Commands.AppUser.LoginUser
             if (result.Succeeded)
             {
                 int a = 4;
-                Token token = _tokenHandler.CreateAccessToken(5);
+                Token token = _tokenHandler.CreateAccessToken(1);
                 int b = 4;
                 return new LoginUserSuccessCommandResponse { Token = token };
 
