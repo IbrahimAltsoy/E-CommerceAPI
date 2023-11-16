@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistanceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddHttpClient();
 //builder.Services.AddStroage<LocalStroage>();
 builder.Services.AddStroage<AzureStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy=>

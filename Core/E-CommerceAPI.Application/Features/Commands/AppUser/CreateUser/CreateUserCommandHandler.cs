@@ -2,47 +2,35 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using E_CommerceAPI.Application.Exceptions;
+using E_CommerceAPI.Application.Abstractions.Services;
+using E_CommerceAPI.Application.DTOs.User;
 
 namespace E_CommerceAPI.Application.Features.Commands.AppUser.CreateUser
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
     {
-        readonly UserManager<U.AppUser> _userManager;
+        readonly IUserService _userService;
 
-        public CreateUserCommandHandler(UserManager<U.AppUser> userManager)
+        public CreateUserCommandHandler(IUserService userService)
         {
-            _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-           IdentityResult result = await _userManager.CreateAsync(new()
+            CreateUserResponse response= await _userService.CreateAsync(new()
             {
-               Id= Guid.NewGuid().ToString(),
-                NameSurname = request.NameSurname, 
+                Email = request.Email,
+                NameSurname = request.NameSurname,
                 UserName = request.UserName,
-                Email = request.Email
-                
-
-
-            },request.Password);
-            CreateUserCommandResponse response = new() { Succeeded = result.Succeeded};
-
-            if (result.Succeeded)
-                response.Message = "Kullanıcı başarılı bir şekilde kayıt edilmiştir.";
-            else
+                Password = request.Password,
+                PasswordConfirm = request.PasswordConfirm
+            });
+            return new()
             {
-                foreach (var error in result.Errors)
-                {
-                    response.Message += $"{error.Description}- {error.Code}<br>";
-                }
-            }
-                
-
-
-          return response;
-           
-             
+                Message = response.Message,
+                Succeeded = response.Succeeded
+            };
            
             
             
