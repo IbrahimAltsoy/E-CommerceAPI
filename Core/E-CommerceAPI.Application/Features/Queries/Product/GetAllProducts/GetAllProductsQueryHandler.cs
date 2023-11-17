@@ -2,6 +2,7 @@
 using E_CommerceAPI.Application.RequestParameters;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_CommerceAPI.Application.Features.Queries.Product.GetAllProducts
 {
@@ -15,21 +16,24 @@ namespace E_CommerceAPI.Application.Features.Queries.Product.GetAllProducts
 
         public async Task<GetAllProductsQueryResponse> Handle(GetAllProductsQueryRequest request, CancellationToken cancellationToken)
         {
-            var totalCount = _productReadRepository.GetAll(false).Count();
-            var products = _productReadRepository.GetAll(true).Skip(request.Size * request.Page).Take(request.Size).Select(p => new
-            {
-                p.Id,
-                p.Name,
-                p.Description,
-                p.Stock,
-                p.Price
+            var totalProductCount = _productReadRepository.GetAll(false).Count();
 
+            var products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size)
+                .Include(p => p.ProductImageFiles)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.Stock,
+                    p.Price
+                    
+                }).ToList();
 
-            }).ToList();
             return new()
             {
                 Products = products,
-                TotalCount = totalCount
+                TotalProductCount = totalProductCount
             };
         }
     }

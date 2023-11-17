@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace E_CommerceAPI.Infrastructure.Services.Token
@@ -32,9 +33,18 @@ namespace E_CommerceAPI.Infrastructure.Services.Token
                 );
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
             token.AccessToken = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
-
+           
+            token.RefreshToken = CreateRefreshToken();
             return token;
             
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number = new byte[32];
+            using RandomNumberGenerator random =RandomNumberGenerator.Create();
+            random.GetBytes(number);
+            return Convert.ToBase64String(number);
         }
     }
 }

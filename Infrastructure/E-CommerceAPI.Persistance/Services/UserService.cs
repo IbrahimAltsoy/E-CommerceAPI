@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using E_CommerceAPI.Application.Abstractions.Services;
 using E_CommerceAPI.Application.DTOs.User;
+using E_CommerceAPI.Application.Exceptions;
 using E_CommerceAPI.Application.Features.Commands.AppUser.CreateUser;
 using E_CommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -43,6 +44,21 @@ namespace E_CommerceAPI.Persistance.Services
 
 
             return response;
+        }
+
+        public async Task UpdateRefreshToken(string refreshToken, AppUser user,DateTime accessTokenDate, int addOnAccessTokenTime)
+        {
+            
+            if (user != null)
+            {
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenEndDate = accessTokenDate.AddSeconds(addOnAccessTokenTime);
+                await _userManager.UpdateAsync(user);
+            }
+            else
+                throw new NotFoundUserExceptions();
+
+
         }
     }
 }

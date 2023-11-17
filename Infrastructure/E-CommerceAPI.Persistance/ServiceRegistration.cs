@@ -11,6 +11,7 @@ using E_CommerceAPI.Persistance.Repositories.File;
 using E_CommerceAPI.Persistance.Repositories.InvoiceFile;
 using E_CommerceAPI.Persistance.Repositories.ProductImage;
 using E_CommerceAPI.Persistance.Services;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,8 +32,8 @@ namespace E_CommerceAPI.Persistance
                 options.Password.RequireUppercase=false;
 
             }).AddEntityFrameworkStores<ECommerceDbContext>();
-            
 
+            //services.AddHttpClient();
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
             services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
@@ -52,6 +53,7 @@ namespace E_CommerceAPI.Persistance
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IInternalAuthencation, AuthService>();
             services.AddScoped<IExternalAuthencation, AuthService>();
+           
 
 
         }

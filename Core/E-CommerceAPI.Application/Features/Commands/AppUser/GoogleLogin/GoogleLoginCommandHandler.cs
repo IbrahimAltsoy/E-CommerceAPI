@@ -1,7 +1,7 @@
 ﻿using U=E_CommerceAPI.Domain.Entities.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Google.Apis.Auth;
+
 using E_CommerceAPI.Application.Abstractions.Token;
 using E_CommerceAPI.Application.DTOs;
 using E_CommerceAPI.Application.Abstractions.Services;
@@ -23,7 +23,7 @@ namespace E_CommerceAPI.Application.Features.Commands.AppUser.GoogleLogin
 
         public async Task<GoogleLoginCommandResponse> Handle(GoogleLoginCommandRequest request, CancellationToken cancellationToken)
         {
-           var token = await _authService.GoogleLoginAsync(request.IdToken, 300);
+           var token = await _authService.GoogleLoginAsync(request.IdToken, 15);
             return new()
             {
                 Token = token

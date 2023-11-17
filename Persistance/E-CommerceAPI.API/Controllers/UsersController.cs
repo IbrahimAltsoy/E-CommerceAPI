@@ -5,11 +5,13 @@ using E_CommerceAPI.Application.Features.Commands.AppUser.LoginUser;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_CommerceAPI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+  
     public class UsersController : ControllerBase
     {
         readonly IMediator _mediator;

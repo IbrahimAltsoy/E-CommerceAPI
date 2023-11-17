@@ -11,6 +11,7 @@ using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
 using E_CommerceAPI.Application.Repositories.ProductImage;
+using E_CommerceAPI.Application.RequestParameters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace E_CommerceAPI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Admin")]
+    //[Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductReadRepository _productReadRepository;
@@ -41,7 +42,7 @@ namespace E_CommerceAPI.API.Controllers
 
 
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository, IFileWriteRepository fileWriteRepository, IProductImageReadRepository productImageReadRepository, IProductImageWriteRepository productImageWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService, IConfiguration configuration)
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository, IFileWriteRepository fileWriteRepository, IProductImageReadRepository productImageReadRepository, IProductImageWriteRepository productImageWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService, IConfiguration configuration, IMediator mediator)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
@@ -54,21 +55,31 @@ namespace E_CommerceAPI.API.Controllers
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
             _storageService = storageService;
             _configuration = configuration;
+            _mediator = mediator;
+            
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync([FromRoute]GetByIdAsyncQueryRequest getByIdAsyncQueryRequest)
+        public async Task<IActionResult> GetByIdAsync([FromRoute] GetByIdAsyncQueryRequest getByIdAsyncQueryRequest)
         {
             GetByIdAsyncQueryResponse response = await _mediator.Send(getByIdAsyncQueryRequest);
-        
-           
+
+
             return Ok(response);
         }
-        //[Guid("0B99B2A9-7DEB-48DC-BC15-01B5180FC0F5")]
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest ) 
-        { 
-           GetAllProductsQueryResponse response= await _mediator.Send(getAllProductsQueryRequest); return Ok(response);
+        public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductQueryRequest)
+        {
+            GetAllProductsQueryResponse response = await _mediator.Send(getAllProductQueryRequest);
+            return Ok(response);
+        }
+
+
+        //[Guid("0B99B2A9-7DEB-48DC-BC15-01B5180FC0F5")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQueryRequest getAllProductsQueryRequest ) 
+        //{ 
+        //   GetAllProductsQueryResponse response= await _mediator.Send(getAllProductsQueryRequest); return Ok(response);
         //public IActionResult GetAll([FromQuery]Pagination pagination)
         //{
 
@@ -88,11 +99,12 @@ namespace E_CommerceAPI.API.Controllers
         //        totalCount,
         //        products
         //    });
-        }
+        // }
         //[HttpGet("{id}")]
         //public async Task<IActionResult> Get(string id)
         //{
-        //    var product = await _productReadService.GetByIdAsync(id, false);
+        //    var product = await _productReadRepository.GetByIdAsync(id, false);
+
         //    return Ok(product);
         //}
         [HttpPost]
@@ -217,6 +229,7 @@ namespace E_CommerceAPI.API.Controllers
 
 
         }
-      
+
+
     }
 }
