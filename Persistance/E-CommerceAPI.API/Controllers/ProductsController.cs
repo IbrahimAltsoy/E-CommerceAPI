@@ -20,8 +20,10 @@ using System.Net;
 // google client Secret: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
 namespace E_CommerceAPI.API.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     //[Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
@@ -38,11 +40,12 @@ namespace E_CommerceAPI.API.Controllers
         readonly IStorageService _storageService;
         readonly IConfiguration _configuration;
         readonly IMediator _mediator;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
 
 
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository, IFileWriteRepository fileWriteRepository, IProductImageReadRepository productImageReadRepository, IProductImageWriteRepository productImageWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService, IConfiguration configuration, IMediator mediator)
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileReadRepository fileReadRepository, IFileWriteRepository fileWriteRepository, IProductImageReadRepository productImageReadRepository, IProductImageWriteRepository productImageWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IStorageService storageService, IConfiguration configuration, IMediator mediator, IHttpContextAccessor httpContextAccessor)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
@@ -56,20 +59,21 @@ namespace E_CommerceAPI.API.Controllers
             _storageService = storageService;
             _configuration = configuration;
             _mediator = mediator;
-            
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] GetByIdAsyncQueryRequest getByIdAsyncQueryRequest)
         {
             GetByIdAsyncQueryResponse response = await _mediator.Send(getByIdAsyncQueryRequest);
-
+           
 
             return Ok(response);
         }
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductQueryRequest)
         {
+            
             GetAllProductsQueryResponse response = await _mediator.Send(getAllProductQueryRequest);
             return Ok(response);
         }

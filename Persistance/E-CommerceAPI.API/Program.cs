@@ -10,12 +10,14 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Core;
 using System.Text;
-using Serilog.Formatting.Json;
 using Serilog.Sinks.MSSqlServer;
 using System.Collections.ObjectModel;
 using E_CommerceAPI.API.Configurations;
-using System.Security.Claims;
 using Serilog.Context;
+using E_CommerceAPI.API.Extensions;
+using E_CommerceAPI.SignalAR;
+using E_CommerceAPI.SignalAR.Hubs;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,11 +25,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistanceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
-//builder.Services.AddHttpClient();
+builder.Services.AddServiceRegistrationSignalR();
+builder.Services.AddHttpClient();
 //builder.Services.AddStroage<LocalStroage>();
 builder.Services.AddStroage<AzureStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod()));
+policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
     .AddFluentValidation(configration => configration.RegisterValidatorsFromAssemblyContaining<CretaeProductValidation>())
@@ -47,8 +50,8 @@ columnOpt.Store.Add(StandardColumn.LogEvent);
 columnOpt.AdditionalColumns = new Collection<SqlColumn> { sqlColumn };
 
 Logger log = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.File("logs/log.xlm")
+    .WriteTo.Console()    
+    .WriteTo.File("logs/log.txt")
     .WriteTo.MSSqlServer(
     connectionString: builder.Configuration.GetConnectionString("Default"),
      sinkOptions: new MSSqlServerSinkOptions
@@ -61,7 +64,7 @@ Logger log = new LoggerConfiguration()
     )
     .Enrich.FromLogContext()
     .Enrich.With<CustomUserNameColumn>()
-    .MinimumLevel.Information()
+    .MinimumLevel.Information() 
     .CreateLogger();
 builder.Host.UseSerilog(log);
 
@@ -95,6 +98,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 
 app.UseStaticFiles();
 app.UseSerilogRequestLogging();
@@ -108,15 +112,13 @@ app.UseAuthorization();
 app.Use(async (context, next) =>
 {
     var username = context.User?.Identity?.IsAuthenticated != null || true ? context.User.Identity.Name : null;
-
-
     LogContext.PushProperty("UserName", username);
 
     await next();
 });
 
 app.MapControllers();
-
+app.MapHubs();
 app.Run();
 
 

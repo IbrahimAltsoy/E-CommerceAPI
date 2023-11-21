@@ -64,8 +64,8 @@ namespace E_CommerceAPI.Persistance.Services
             if (result)
             {
                 await _userManager.AddLoginAsync(user, info);
-                Token token = _tokenHandler.CreateAccessToken(15,user);
-                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5);
+                Token token = _tokenHandler.CreateAccessToken(15*60,user);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5*60);
                 return token;
 
             }
@@ -93,7 +93,7 @@ namespace E_CommerceAPI.Persistance.Services
             {
 
                 Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime,user);
-                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5*60);
                 return token;
 
             }
@@ -106,8 +106,8 @@ namespace E_CommerceAPI.Persistance.Services
             AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
             if (user != null && user?.RefreshTokenEndDate>DateTime.UtcNow)
             {
-                Token token = _tokenHandler.CreateAccessToken(15,user);
-               await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5);
+                Token token = _tokenHandler.CreateAccessToken(15*60,user);
+               await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 5*60);
                 return token;
             }
             else

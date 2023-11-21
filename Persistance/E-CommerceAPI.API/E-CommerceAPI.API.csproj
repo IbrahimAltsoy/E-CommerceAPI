@@ -29,9 +29,11 @@
     <ProjectReference Include="..\..\Core\E-CommerceAPI.Application\E-CommerceAPI.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\E-CommerceAPI.Infrastructure\E-CommerceAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\E-CommerceAPI.Persistance\E-CommerceAPI.Persistance.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\E-CommerceAPI.SignalAR\E-CommerceAPI.SignalAR.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Middlewares\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
