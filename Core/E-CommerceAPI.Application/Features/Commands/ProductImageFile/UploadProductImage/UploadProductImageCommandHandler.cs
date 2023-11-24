@@ -22,7 +22,7 @@ namespace E_CommerceAPI.Application.Features.Commands.ProductImageFile.UploadPro
 
         public async Task<UploadProductImageCommandResponse> Handle(UploadProductImageCommandRequest request, CancellationToken cancellationToken)
         {
-            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("files", request.Files);
+            List<(string fileName, string pathOrContainerName)> result = await _storageService.UploadAsync("photo-images", request.Files);
             P.Product product = await _productReadRepository.GetByIdAsync(request.Id, true);
             await _productImageWriteRepository.AddRangeAsync(result.Select(p => new P.ProductImageFile()
             {

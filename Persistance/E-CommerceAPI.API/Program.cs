@@ -18,6 +18,7 @@ using E_CommerceAPI.API.Extensions;
 using E_CommerceAPI.SignalAR;
 using E_CommerceAPI.SignalAR.Hubs;
 using Microsoft.AspNetCore.Builder;
+using E_CommerceAPI.Infrastructure.Services.Stroage.Local;
 
 var builder = WebApplication.CreateBuilder(args);
 

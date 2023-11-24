@@ -26,7 +26,8 @@ namespace E_CommerceAPI.Application.Features.Queries.Product.GetAllProducts
                     p.Name,
                     p.Description,
                     p.Stock,
-                    p.Price
+                    p.Price,
+                    p.ProductImageFiles
                     
                 }).ToList();
 

@@ -2,6 +2,7 @@
 using E_CommerceAPI.Application.Features.Commands.Product.CreateProduct;
 using E_CommerceAPI.Application.Features.Commands.Product.DeleteProduct;
 using E_CommerceAPI.Application.Features.Commands.Product.UpdateProduct;
+using E_CommerceAPI.Application.Features.Commands.ProductImageFile.ChangeShowcaseImage;
 using E_CommerceAPI.Application.Features.Commands.ProductImageFile.RemoveProductImage;
 using E_CommerceAPI.Application.Features.Commands.ProductImageFile.UploadProductImage;
 using E_CommerceAPI.Application.Features.Queries.Product.GetAllProducts;
@@ -12,6 +13,7 @@ using E_CommerceAPI.Application.Repositories.File;
 using E_CommerceAPI.Application.Repositories.InvoiceFile;
 using E_CommerceAPI.Application.Repositories.ProductImage;
 using E_CommerceAPI.Application.RequestParameters;
+using E_CommerceAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +25,7 @@ namespace E_CommerceAPI.API.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
+    
     //[Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
@@ -70,6 +72,7 @@ namespace E_CommerceAPI.API.Controllers
 
             return Ok(response);
         }
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductQueryRequest)
         {
@@ -111,23 +114,25 @@ namespace E_CommerceAPI.API.Controllers
 
         //    return Ok(product);
         //}
+
+
         [HttpPost]
         public async Task<IActionResult> AddProduct(CreateProductCommandRequest createProductCommandRequest)
         {
-            CreateProductCommandResponse response= await _mediator.Send(createProductCommandRequest);
-        //    if (ModelState.IsValid)
-        //    {
-                
-        //    }
-        //    await _productWriteRepository.AddAsync(new()
-        //    {
+            CreateProductCommandResponse response = await _mediator.Send(createProductCommandRequest);
+            //    if (ModelState.IsValid)
+            //    {
 
-        //        Name = model.Name,
-        //        Description = model.Description,
-        //        Stock = model.Stock,
-        //        Price = model.Price
-        //    });
-        //    await _productWriteRepository.SaveChanges();
+            //    }
+            //    await _productWriteRepository.AddAsync(new()
+            //    {
+
+            //        Name = model.Name,
+            //        Description = model.Description,
+            //        Stock = model.Stock,
+            //        Price = model.Price
+            //    });
+            //    await _productWriteRepository.SaveChanges();
             return StatusCode((int)HttpStatusCode.Created);
 
 
@@ -233,6 +238,13 @@ namespace E_CommerceAPI.API.Controllers
 
 
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ChangeShowcaseImage([FromQuery]ChangeShowcaseImageCommandRequest changeShowcaseImageCommandRequest)
+        {
+            ChangeShowcaseImageCommandResponse response = await _mediator.Send(changeShowcaseImageCommandRequest);
+            return Ok(response);
+        }
+        
 
 
     }
