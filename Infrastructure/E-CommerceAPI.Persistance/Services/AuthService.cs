@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace E_CommerceAPI.Persistance.Services
 {
@@ -20,6 +21,7 @@ namespace E_CommerceAPI.Persistance.Services
         readonly SignInManager<AppUser> _signInManager;
         readonly IUserService _userService;
         
+
 
 
         public AuthService(IHttpClientFactory httpClientFactory, UserManager<AppUser> userManager, ITokenHandler tokenHandler, IConfiguration configuration, SignInManager<AppUser> signInManager, IUserService userService)
@@ -97,7 +99,7 @@ namespace E_CommerceAPI.Persistance.Services
                 return token;
 
             }
-            else throw new AuthenticationErrorExceptions();
+            throw new AuthenticationErrorExceptions();
             //else return new LoginUserUnSuccessCommandResponse { Message = "Kimlik doğrulama hatası oluştu. Tekrardan Giriş yapınız." };
         }
 

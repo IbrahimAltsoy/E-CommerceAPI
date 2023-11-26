@@ -25,8 +25,8 @@ namespace E_CommerceAPI.API.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
-    
-    //[Authorize(AuthenticationSchemes = "Admin")]
+
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductReadRepository _productReadRepository;
@@ -72,10 +72,11 @@ namespace E_CommerceAPI.API.Controllers
 
             return Ok(response);
         }
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductQueryRequest)
         {
+           
             
             GetAllProductsQueryResponse response = await _mediator.Send(getAllProductQueryRequest);
             return Ok(response);

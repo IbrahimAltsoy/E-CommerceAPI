@@ -23,7 +23,7 @@ namespace E_CommerceAPI.API.Controllers
         {
             // userName: Cengiz password :Samsun01.  
             LoginUsercommandResponse response = await _mediator.Send(loginUserCommandRequest);
-            int a = 0;
+           
             return Ok(response);
         }
         [HttpPost("google-login")]

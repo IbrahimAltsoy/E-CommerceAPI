@@ -16,6 +16,7 @@ using E_CommerceAPI.Persistance.Repositories.InvoiceFile;
 using E_CommerceAPI.Persistance.Repositories.ProductImage;
 using E_CommerceAPI.Persistance.Services;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -51,17 +52,19 @@ namespace E_CommerceAPI.Persistance
             services.AddScoped<IProductImageReadRepository, ProductImageReadRepository>();
             services.AddScoped<IProductImageWriteRepository, ProductImageWriteRepository>();
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
-            services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
-            services.AddScoped<IUserService, UserService>();
-
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IInternalAuthencation, AuthService>();
-            services.AddScoped<IExternalAuthencation, AuthService>();
+            services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();        
             services.AddScoped<IBasketReadRepository, BasketReadRepository>();
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
             services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
             services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
-           
+
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IInternalAuthencation, AuthService>();
+            services.AddScoped<IExternalAuthencation, AuthService>();
+            services.AddScoped<IBasketService, BasketService>();
+          
 
 
         }

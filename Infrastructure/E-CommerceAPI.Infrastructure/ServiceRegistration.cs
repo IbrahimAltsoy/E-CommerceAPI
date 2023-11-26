@@ -7,6 +7,7 @@ using E_CommerceAPI.Infrastructure.Services.Stroage;
 using E_CommerceAPI.Infrastructure.Services.Stroage.Azure;
 using E_CommerceAPI.Infrastructure.Services.Stroage.Local;
 using E_CommerceAPI.Infrastructure.Services.Token;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace E_CommerceAPI.Infrastructure
@@ -18,6 +19,7 @@ namespace E_CommerceAPI.Infrastructure
             //serviceCollection.AddScoped<IFileService, FileService>();
             serviceCollection.AddScoped<IStorageService, StorageService>();
             serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
+            
         }
         public static void AddStroage<T>(this IServiceCollection serviceCollection) where T : class, IStorage
         {

@@ -19,15 +19,19 @@ using E_CommerceAPI.SignalAR;
 using E_CommerceAPI.SignalAR.Hubs;
 using Microsoft.AspNetCore.Builder;
 using E_CommerceAPI.Infrastructure.Services.Stroage.Local;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddPersistanceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddServiceRegistrationSignalR();
 builder.Services.AddHttpClient();
+
+
 //builder.Services.AddStroage<LocalStroage>();
 builder.Services.AddStroage<AzureStorage>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
@@ -43,7 +47,7 @@ SqlColumn sqlColumn = new SqlColumn();
 sqlColumn.ColumnName = "UserName";
 sqlColumn.DataType = System.Data.SqlDbType.NVarChar;
 sqlColumn.PropertyName = "UserName";
-sqlColumn.DataLength = 50;
+sqlColumn.DataLength = 500;
 sqlColumn.AllowNull = true;
 ColumnOptions columnOpt = new ColumnOptions();
 columnOpt.Store.Remove(StandardColumn.Properties);
@@ -51,7 +55,7 @@ columnOpt.Store.Add(StandardColumn.LogEvent);
 columnOpt.AdditionalColumns = new Collection<SqlColumn> { sqlColumn };
 
 Logger log = new LoggerConfiguration()
-    .WriteTo.Console()    
+    .WriteTo.Console()
     .WriteTo.File("logs/log.txt")
     .WriteTo.MSSqlServer(
     connectionString: builder.Configuration.GetConnectionString("Default"),
@@ -65,7 +69,7 @@ Logger log = new LoggerConfiguration()
     )
     .Enrich.FromLogContext()
     .Enrich.With<CustomUserNameColumn>()
-    .MinimumLevel.Information() 
+    .MinimumLevel.Information()
     .CreateLogger();
 builder.Host.UseSerilog(log);
 
@@ -84,7 +88,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Token:Audience"],
             ValidIssuer = builder.Configuration["Token:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
-            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
+            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false,
+            NameClaimType = ClaimTypes.Name
 
         };
     });
@@ -109,6 +114,7 @@ app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.Use(async (context, next) =>
 {

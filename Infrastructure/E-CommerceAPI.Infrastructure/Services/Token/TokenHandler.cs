@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -22,22 +23,33 @@ namespace E_CommerceAPI.Infrastructure.Services.Token
         public Application.DTOs.Token CreateAccessToken(int second, AppUser user)
         {
             Application.DTOs.Token token = new();
+
+            //Security Key'in simetriğini alıyoruz.
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
+
+            //Şifrelenmiş kimliği oluşturuyoruz.
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
+
+            //Oluşturulacak token ayarlarını veriyoruz.
             token.Expiration = DateTime.UtcNow.AddSeconds(second);
-            JwtSecurityToken jwtSecurityToken = new(
-                audience : _configuration["Token:Audience"],
-                issuer : _configuration["Token: Issuer"],
-                expires:token.Expiration,
+            JwtSecurityToken securityToken = new(
+                audience: _configuration["Token:Audience"],
+                issuer: _configuration["Token:Issuer"],
+                expires: token.Expiration,
                 notBefore: DateTime.UtcNow,
-               signingCredentials: signingCredentials
+                signingCredentials: signingCredentials,
+                claims: new List<Claim> { new(ClaimTypes.Name, user.UserName) }
                 );
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
-            token.AccessToken = jwtSecurityTokenHandler.WriteToken(jwtSecurityToken);
-           
+
+            //Token oluşturucu sınıfından bir örnek alalım.
+            JwtSecurityTokenHandler tokenHandler = new();
+            token.AccessToken = tokenHandler.WriteToken(securityToken);
+
+            //string refreshToken = CreateRefreshToken();
+
             token.RefreshToken = CreateRefreshToken();
             return token;
-            
+
         }
 
         public string CreateRefreshToken()
