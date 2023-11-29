@@ -4,6 +4,7 @@ using E_CommerceAPI.Persistance.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceAPI.Persistance.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    partial class ECommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128213247_mig_DeletePropertyCustomerInOrder")]
+    partial class mig_DeletePropertyCustomerInOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,6 +247,9 @@ namespace E_CommerceAPI.Persistance.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -252,6 +258,8 @@ namespace E_CommerceAPI.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -393,6 +401,21 @@ namespace E_CommerceAPI.Persistance.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.Property<Guid>("OrdersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("OrdersId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("OrderProduct");
+                });
+
             modelBuilder.Entity("ProductProductImageFile", b =>
                 {
                     b.Property<Guid>("ProductImageFilesId")
@@ -460,6 +483,10 @@ namespace E_CommerceAPI.Persistance.Migrations
 
             modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("E_CommerceAPI.Domain.Entities.Customer", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId");
+
                     b.HasOne("E_CommerceAPI.Domain.Entities.Basket", "Basket")
                         .WithOne("Order")
                         .HasForeignKey("E_CommerceAPI.Domain.Entities.Order", "Id")
@@ -520,6 +547,21 @@ namespace E_CommerceAPI.Persistance.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.HasOne("E_CommerceAPI.Domain.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_CommerceAPI.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProductProductImageFile", b =>
                 {
                     b.HasOne("E_CommerceAPI.Domain.Entities.ProductImageFile", null)
@@ -541,6 +583,11 @@ namespace E_CommerceAPI.Persistance.Migrations
 
                     b.Navigation("Order")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Identity.AppUser", b =>

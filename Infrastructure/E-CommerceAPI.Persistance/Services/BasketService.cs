@@ -80,7 +80,7 @@ namespace E_CommerceAPI.Persistance.Services
             Basket? basket = await ContextUser();
             if (basket != null)
             {
-                BasketItem _basketItem = await _basketItemReadRepository.GetSingleAsync(bi => bi.BasketId == basket.Id && bi.ProductId == Guid.Parse(basketItem.ProductId),true);
+                BasketItem _basketItem = await _basketItemReadRepository.GetSingleAsync(bi => bi.BasketId == basket.Id && bi.ProductId == Guid.Parse(basketItem.ProductId), true);
                 if (_basketItem != null)
                     _basketItem.Quantity++;
                 else
@@ -109,7 +109,7 @@ namespace E_CommerceAPI.Persistance.Services
 
         public async Task RemoveBasketItemAsync(string basketItemId)
         {
-            BasketItem? basketItem = await _basketItemReadRepository.GetByIdAsync(basketItemId,true);
+            BasketItem? basketItem = await _basketItemReadRepository.GetByIdAsync(basketItemId, true);
             if (basketItem != null)
             {
                 _basketItemWriteRepository.Delete(basketItem);
@@ -119,7 +119,7 @@ namespace E_CommerceAPI.Persistance.Services
 
         public async Task UpdateQuantityAsync(VM_Update_BasketItem basketItem)
         {
-            BasketItem? _basketItem = await _basketItemReadRepository.GetByIdAsync(basketItem.BasketItemId,true);
+            BasketItem? _basketItem = await _basketItemReadRepository.GetByIdAsync(basketItem.BasketItemId, true);
             if (_basketItem != null)
             {
                 _basketItem.Quantity = basketItem.Quantity;
@@ -127,13 +127,15 @@ namespace E_CommerceAPI.Persistance.Services
             }
         }
 
-        //public Basket? GetUserActiveBasket
-        //{
-        //    get
-        //    {
-        //        Basket? basket = ContextUser().Result;
-        //        return basket;
-        //    }
-        //}
+        public Basket? GetUserActiveBasket
+        {
+            get
+            {
+                Basket? basket = ContextUser().Result;
+                return basket;
+
+            }
+
+        }
     }
 }

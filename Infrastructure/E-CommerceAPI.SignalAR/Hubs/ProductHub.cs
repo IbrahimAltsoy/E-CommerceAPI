@@ -5,8 +5,6 @@ namespace E_CommerceAPI.SignalAR.Hubs
 {
     public class ProductHub:Hub
     {
-      
-
-        
+              
     }
 }

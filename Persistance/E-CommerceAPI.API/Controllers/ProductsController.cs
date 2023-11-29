@@ -72,7 +72,7 @@ namespace E_CommerceAPI.API.Controllers
 
             return Ok(response);
         }
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductsQueryRequest getAllProductQueryRequest)
         {

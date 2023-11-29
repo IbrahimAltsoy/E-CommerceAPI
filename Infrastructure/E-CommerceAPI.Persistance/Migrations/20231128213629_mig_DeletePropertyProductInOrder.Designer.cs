@@ -4,6 +4,7 @@ using E_CommerceAPI.Persistance.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_CommerceAPI.Persistance.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    partial class ECommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128213629_mig_DeletePropertyProductInOrder")]
+    partial class mig_DeletePropertyProductInOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,6 +247,9 @@ namespace E_CommerceAPI.Persistance.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -252,6 +258,8 @@ namespace E_CommerceAPI.Persistance.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -460,6 +468,10 @@ namespace E_CommerceAPI.Persistance.Migrations
 
             modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("E_CommerceAPI.Domain.Entities.Customer", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId");
+
                     b.HasOne("E_CommerceAPI.Domain.Entities.Basket", "Basket")
                         .WithOne("Order")
                         .HasForeignKey("E_CommerceAPI.Domain.Entities.Order", "Id")
@@ -541,6 +553,11 @@ namespace E_CommerceAPI.Persistance.Migrations
 
                     b.Navigation("Order")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Identity.AppUser", b =>

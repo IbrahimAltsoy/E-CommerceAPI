@@ -9,6 +9,7 @@ namespace E_CommerceAPI.SignalAR
         public static void MapHubs(this WebApplication application)
         {
             application.MapHub<ProductHub>("/products-hub");
+            application.MapHub<OrderHub>("/ordersf-hub");
         }
     }
 }
