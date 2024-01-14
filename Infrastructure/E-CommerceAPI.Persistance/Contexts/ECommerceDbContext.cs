@@ -22,12 +22,16 @@ namespace E_CommerceAPI.Persistance.Contexts
         public DbSet<InvoiceFile> InvoiceFiles { get; set; }
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
-
+        public DbSet<CompletedOrder> CompletedOrders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Order>()
                 .HasKey(b => b.Id);
+            builder.Entity<Order>()
+                .HasIndex(b => b.OrderCode)
+                .IsUnique();
+
             builder.Entity<Basket>()
                 .HasOne(b => b.Order)
                 .WithOne(b => b.Basket)

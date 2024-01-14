@@ -1,8 +1,8 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace E_CommerceAPI.Application.Features.Queries.Order.GetAllOrders
+namespace E_CommerceAPI.Application.DTOs.Order
 {
-    public class GetAllOrdersQueryResponse
+    public class ReadOrders_Dto
     {
         //public string OrderCode { get; set; }
         //public string UserName { get; set; }
@@ -14,5 +14,3 @@ namespace E_CommerceAPI.Application.Features.Queries.Order.GetAllOrders
         public object Orders { get; set; }
     }
 }
-
-

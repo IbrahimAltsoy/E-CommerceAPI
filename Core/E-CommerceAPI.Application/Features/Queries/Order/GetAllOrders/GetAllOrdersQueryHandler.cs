@@ -1,12 +1,26 @@
-﻿using MediatR;
+﻿using E_CommerceAPI.Application.Abstractions.Services;
+using MediatR;
 
 namespace E_CommerceAPI.Application.Features.Queries.Order.GetAllOrders
 {
     public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQueryRequest, GetAllOrdersQueryResponse>
     {
-        public Task<GetAllOrdersQueryResponse> Handle(GetAllOrdersQueryRequest request, CancellationToken cancellationToken)
+        readonly IOrderService _orderService;
+
+        public GetAllOrdersQueryHandler(IOrderService orderService)
         {
-            throw new NotImplementedException();
+            _orderService = orderService;
+        }
+
+        public async Task<GetAllOrdersQueryResponse> Handle(GetAllOrdersQueryRequest request, CancellationToken cancellationToken)
+        {
+            var data = await _orderService.GetAllOrdersAsync(request.Page, request.Size);
+
+            return new()
+            {
+                TotalOrderCount = data.TotalOrderCount,
+                Orders = data.Orders
+            };
         }
     }
 }

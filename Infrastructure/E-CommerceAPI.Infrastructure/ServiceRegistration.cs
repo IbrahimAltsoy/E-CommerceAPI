@@ -1,4 +1,5 @@
-﻿using E_CommerceAPI.Application.Abstractions.Storage;
+﻿using E_CommerceAPI.Application.Abstractions.Services;
+using E_CommerceAPI.Application.Abstractions.Storage;
 using E_CommerceAPI.Application.Abstractions.Token;
 using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Infrastructure.Enums;
@@ -19,6 +20,7 @@ namespace E_CommerceAPI.Infrastructure
             //serviceCollection.AddScoped<IFileService, FileService>();
             serviceCollection.AddScoped<IStorageService, StorageService>();
             serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
+            serviceCollection.AddScoped<IMailService, MailService>();
             
         }
         public static void AddStroage<T>(this IServiceCollection serviceCollection) where T : class, IStorage

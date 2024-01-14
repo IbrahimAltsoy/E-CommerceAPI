@@ -117,7 +117,7 @@ namespace E_CommerceAPI.API.Controllers
         //}
 
 
-        [HttpPost]
+        [HttpPost]        
         public async Task<IActionResult> AddProduct(CreateProductCommandRequest createProductCommandRequest)
         {
             CreateProductCommandResponse response = await _mediator.Send(createProductCommandRequest);

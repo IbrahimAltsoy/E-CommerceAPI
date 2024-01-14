@@ -17,8 +17,7 @@ namespace E_CommerceAPI.API.Controllers
         [HttpGet]
         public IActionResult GetStorageBaseUrl()
         {
-            int a = 6;
-
+            
             return Ok(new
             {
                 Url = _configuration["StorageBaseUrl"]
